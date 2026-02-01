@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Dosis Obat Inotropik</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        header h1 i {
+            margin-right: 15px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .warning-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+            color: #856404;
+        }
+        
+        .warning-box i {
+            color: #ffc107;
+            margin-right: 10px;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        @media (min-width: 992px) {
+            .app-container {
+                flex-direction: row;
+            }
+        }
+        
+        .calculator-section {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .info-section {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .input-with-unit {
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-with-unit input, .input-with-unit select {
+            flex: 1;
+        }
+        
+        .unit {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            color: #666;
+            font-weight: 600;
+            min-width: 80px;
+            text-align: center;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+        
+        .input-with-unit input {
+            border-radius: 5px 0 0 5px;
+        }
+        
+        .drug-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .drug-option {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .drug-option:hover {
+            background-color: #e3f2fd;
+            border-color: var(--secondary);
+        }
+        
+        .drug-option.active {
+            background-color: #e3f2fd;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .drug-option i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--secondary);
+        }
+        
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .calculate-btn i {
+            margin-right: 10px;
+        }
+        
+        .calculate-btn:hover {
+            background-color: #219653;
+        }
+        
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #f8f9fa;
+            color: #666;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .reset-btn i {
+            margin-right: 10px;
+        }
+        
+        .reset-btn:hover {
+            background-color: #e9ecef;
+        }
+        
+        .results-container {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .result-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-title i {
+            margin-right: 10px;
+            color: var(--success);
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .result-label {
+            color: #666;
+        }
+        
+        .result-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .highlight {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        
+        .drug-info {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .drug-name {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .drug-class {
+            display: inline-block;
+            padding: 5px 12px;
+            background-color: #e3f2fd;
+            color: var(--secondary);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .drug-description {
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        .indications-list, .side-effects-list {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .indications-list li, .side-effects-list li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        .disclaimer {
+            background-color: #ffeaea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #c0392b;
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .history-section {
+            margin-top: 30px;
+        }
+        
+        .history-item {
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--gray);
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .history-item .time {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .concentration-display {
+            background-color: #e8f4fd;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--secondary);
+        }
+        
+        .concentration-display strong {
+            color: var(--primary);
+        }
+        
+        .drug-prep-info {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 8px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .drug-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .drug-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-with-unit {
+                flex-direction: column;
+            }
+            
+            .input-with-unit input, .input-with-unit select {
+                border-radius: 5px;
+                margin-bottom: 5px;
+            }
+            
+            .unit {
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-calculator"></i> Kalkulator Dosis Obat Inotropik</h1>
+            <p>Alat bantu perhitungan dosis obat inotropik dan vasopressor untuk tenaga kesehatan</p>
+        </header>
+        
+        <div class="warning-box">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>PERHATIAN:</strong> Kalkulator ini hanya sebagai alat bantu. Selalu verifikasi perhitungan secara manual dan konsultasikan dengan dokter sebelum pemberian obat.
+        </div>
+        
+        <div class="app-container">
+            <section class="calculator-section">
+                <h2 class="section-title"><i class="fas fa-capsules"></i> Kalkulator Dosis</h2>
+                
+                <div class="form-group">
+                    <label>Pilih Obat Inotropik</label>
+                    <div class="drug-selector" id="drugSelector">
+                        <div class="drug-option active" data-drug="dobutamine">
+                            <i class="fas fa-heartbeat"></i>
+                            <div>Dobutamine</div>
+                        </div>
+                        <div class="drug-option" data-drug="dopamine">
+                            <i class="fas fa-tint"></i>
+                            <div>Dopamine</div>
+                        </div>
+                        <div class="drug-option" data-drug="noradrenaline">
+                            <i class="fas fa-heart"></i>
+                            <div>Noradrenaline</div>
+                        </div>
+                        <div class="drug-option" data-drug="adrenaline">
+                            <i class="fas fa-bolt"></i>
+                            <div>Adrenaline</div>
+                        </div>
+                        <div class="drug-option" data-drug="milrinone">
+                            <i class="fas fa-vial"></i>
+                            <div>Milrinone</div>
+                        </div>
+                        <div class="drug-option" data-drug="isoprenaline">
+                            <i class="fas fa-syringe"></i>
+                            <div>Isoprenaline</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="doseCalculator">
+                    <div class="form-group">
+                        <label for="patientWeight">Berat Badan Pasien</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="patientWeight" min="1" max="300" step="0.1" placeholder="Contoh: 70" required>
+                            <span class="unit">kg</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="desiredDose">Dosis yang Diinginkan</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="desiredDose" min="0.01" max="50" step="0.01" placeholder="Contoh: 5" required>
+                            <span class="unit" id="doseUnit">μg/kg/menit</span>
+                        </div>
+                        <small id="doseRangeInfo" style="color: #666; display: block; margin-top: 5px;">Dosis lazim: 2-20 μg/kg/menit</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="drugAmount">Dosis Obat yang Disediakan</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="drugAmount" min="1" max="10000" step="1" placeholder="Contoh: 250" required>
+                            <select id="drugAmountUnit" class="unit">
+                                <option value="mg">mg</option>
+                                <option value="g">g</option>
+                                <option value="mcg">mcg</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="diluentVolume">Volume Pelarut</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="diluentVolume" min="1" max="1000" step="1" placeholder="Contoh: 250" required>
+                            <select id="diluentUnit" class="unit">
+                                <option value="ml">mL</option>
+                                <option value="l">L</option>
+                            </select>
+                        </div>
+                        <div id="concentrationResult" class="concentration-display" style="display: none;">
+                            <strong>Konsentrasi Obat:</strong> <span id="calculatedConcentration">0</span> mg/mL
+                            <div class="drug-prep-info" id="preparationInfo"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="infusionRate">Kecepatan Infus (opsional)</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="infusionRate" min="0.1" max="200" step="0.1" placeholder="Kosongkan untuk menghitung">
+                            <span class="unit">mL/jam</span>
+                        </div>
+                        <small style="color: #666; display: block; margin-top: 5px;">Jika diisi, akan menghitung dosis dari kecepatan infus</small>
+                    </div>
+                    
+                    <button type="submit" class="calculate-btn">
+                        <i class="fas fa-calculator"></i> Hitung Dosis
+                    </button>
+                    
+                    <button type="button" class="reset-btn" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                </form>
+                
+                <div id="results" class="results-container" style="display: none;">
+                    <h3 class="result-title"><i class="fas fa-file-medical-alt"></i> Hasil Perhitungan</h3>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Obat yang digunakan</span>
+                        <span class="result-value" id="resultDrug">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Berat badan pasien</span>
+                        <span class="result-value" id="resultWeight">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Dosis yang diinginkan</span>
+                        <span class="result-value" id="resultDesiredDose">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Konsentrasi obat</span>
+                        <span class="result-value" id="resultConcentration">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Kecepatan Infus</span>
+                        <span class="result-value highlight" id="resultInfusionRate">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Kecepatan Infus (tetes/menit)</span>
+                        <span class="result-value highlight" id="resultDropsPerMin">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Dosis per jam</span>
+                        <span class="result-value" id="resultDosePerHour">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Total dosis per hari</span>
+                        <span class="result-value" id="resultDosePerDay">-</span>
+                    </div>
+                </div>
+                
+                <div class="history-section" id="historySection" style="display: none;">
+                    <h3 class="section-title"><i class="fas fa-history"></i> Riwayat Perhitungan</h3>
+                    <div id="historyList"></div>
+                </div>
+            </section>
+            
+            <section class="info-section">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> Informasi Obat</h2>
+                
+                <div id="drugInfo">
+                    <div class="drug-info">
+                        <div class="drug-name">Dobutamine</div>
+                        <div class="drug-class">Inotropik & Vasodilator</div>
+                        <div class="drug-description">
+                            Dobutamine adalah agonis reseptor β1-adrenergik yang meningkatkan kontraktilitas miokard dan curah jantung tanpa banyak meningkatkan kebutuhan oksigen miokard.
+                        </div>
+                        
+                        <h4 style="margin: 15px 0 10px 0; color: var(--primary);"><i class="fas fa-check-circle"></i> Indikasi</h4>
+                        <ul class="indications-list">
+                            <li>Gagal jantung akut dekompensata</li>
+                            <li>Syok kardiogenik</li>
+                            <li>Low cardiac output syndrome pasca bedah jantung</li>
+                        </ul>
+                        
+                        <h4 style="margin: 15px 0 10px 0; color: var(--primary);"><i class="fas fa-exclamation-triangle"></i> Efek Samping</h4>
+                        <ul class="side-effects-list">
+                            <li>Takhikardia, aritmia</li>
+                            <li>Hipertensi atau hipotensi</li>
+                            <li>Nyeri kepala, mual</li>
+                            <li>Angina pektoris</li>
+                        </ul>
+                        
+                        <div class="result-item">
+                            <span class="result-label">Dosis lazim</span>
+                            <span class="result-value">2-20 μg/kg/menit</span>
+                        </div>
+                        
+                        <div class="result-item">
+                            <span class="result-label">Sediaan umum</span>
+                            <span class="result-value">250 mg dalam 250 mL (1 mg/mL)</span>
+                        </div>
+                        
+                        <div class="result-item">
+                            <span class="result-label">Onset kerja</span>
+                            <span class="result-value">1-2 menit</span>
+                        </div>
+                        
+                        <div class="result-item">
+                            <span class="result-label">Durasi kerja</span>
+                            <span class="result-value">1-2 menit setelah penghentian</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="disclaimer">
+                    <strong><i class="fas fa-exclamation-circle"></i> DISCLAIMER MEDIS:</strong> Informasi di website ini hanya untuk tujuan edukasi dan tidak menggantikan saran medis profesional. Selalu konsultasikan dengan dokter atau apoteker untuk diagnosis dan pengobatan yang tepat. Penggunaan obat harus sesuai resep dan pengawasan tenaga kesehatan.
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>Kalkulator Dosis Obat Inotropik &copy; 2023 | Alat bantu untuk tenaga kesehatan</p>
+            <p>Dikembangkan dengan <i class="fas fa-heart" style="color: #e74c3c;"></i> untuk mendukung praktik klinis yang aman</p>
+        </footer>
+    </div>
+
+    <script>
+        // Data obat inotropik
+        const drugs = {
+            dobutamine: {
+                name: "Dobutamine",
+                class: "Inotropik & Vasodilator",
+                description: "Dobutamine adalah agonis reseptor β1-adrenergik yang meningkatkan kontraktilitas miokard dan curah jantung tanpa banyak meningkatkan kebutuhan oksigen miokard.",
+                usualDose: "2-20",
+                doseUnit: "μg/kg/menit",
+                defaultAmount: 250,
+                defaultAmountUnit: "mg",
+                defaultDiluent: 250,
+                defaultDiluentUnit: "ml",
+                preparationInfo: "Sediaan umum: 250 mg Dobutamine dalam 250 mL larutan (biasanya D5W atau NS)",
+                indications: [
+                    "Gagal jantung akut dekompensata",
+                    "Syok kardiogenik",
+                    "Low cardiac output syndrome pasca bedah jantung"
+                ],
+                sideEffects: [
+                    "Takhikardia, aritmia",
+                    "Hipertensi atau hipotensi",
+                    "Nyeri kepala, mual",
+                    "Angina pektoris"
+                ],
+                onset: "1-2 menit",
+                duration: "1-2 menit setelah penghentian"
+            },
+            dopamine: {
+                name: "Dopamine",
+                class: "Inotropik & Vasopressor",
+                description: "Dopamine adalah prekursor noradrenalin yang memiliki efek dosis-dependent: dosis rendah (1-3 μg/kg/menit) vasodilatasi renal, dosis sedang (3-10 μg/kg/menit) inotropik, dosis tinggi (>10 μg/kg/menit) vasokonstriksi.",
+                usualDose: "1-20",
+                doseUnit: "μg/kg/menit",
+                defaultAmount: 400,
+                defaultAmountUnit: "mg",
+                defaultDiluent: 250,
+                defaultDiluentUnit: "ml",
+                preparationInfo: "Sediaan umum: 400 mg Dopamine dalam 250 mL larutan (1.6 mg/mL)",
+                indications: [
+                    "Syok (kardiogenik, septik, hipovolemik)",
+                    "Bradikardia simptomatik",
+                    "Gagal jantung dengan hipotensi"
+                ],
+                sideEffects: [
+                    "Takhikardia, aritmia",
+                    "Vasokonstriksi perifer",
+                    "Nyeri kepala, mual, muntah",
+                    "Gangren ekstremitas (dosis tinggi)"
+                ],
+                onset: "5 menit",
+                duration: "10 menit setelah penghentian"
+            },
+            noradrenaline: {
+                name: "Noradrenaline",
+                class: "Vasopressor",
+                description: "Noradrenaline (Norepinephrine) adalah agonis α-adrenergik kuat dengan sedikit efek β1, menyebabkan vasokonstriksi kuat yang meningkatkan tekanan darah sistemik dan resistensi vaskular sistemik.",
+                usualDose: "0.05-0.5",
+                doseUnit: "μg/kg/menit",
+                defaultAmount: 4,
+                defaultAmountUnit: "mg",
+                defaultDiluent: 250,
+                defaultDiluentUnit: "ml",
+                preparationInfo: "Sediaan umum: 4 mg Noradrenaline dalam 250 mL larutan (16 μg/mL atau 0.016 mg/mL)",
+                indications: [
+                    "Syok septik dengan hipotensi refrakter",
+                    "Syok neurogenik",
+                    "Syok anafilaktik refrakter"
+                ],
+                sideEffects: [
+                    "Vasokonstriksi ekstrem (risiko nekrosis)",
+                    "Bradycardia refleks",
+                    "Ischemia organ (ginjal, mesenterika)",
+                    "Hipertensi berat"
+                ],
+                onset: "1-2 menit",
+                duration: "1-2 menit setelah penghentian"
+            },
+            adrenaline: {
+                name: "Adrenaline",
+                class: "Inotropik & Vasopressor",
+                description: "Adrenaline (Epinephrine) adalah agonis α dan β-adrenergik kuat dengan efek inotropik, kronotropik, dan vasokonstriktor. Merupakan obat pilihan pertama untuk anafilaksis dan henti jantung.",
+                usualDose: "0.01-0.5",
+                doseUnit: "μg/kg/menit",
+                defaultAmount: 1,
+                defaultAmountUnit: "mg",
+                defaultDiluent: 250,
+                defaultDiluentUnit: "ml",
+                preparationInfo: "Sediaan umum: 1 mg Adrenaline dalam 250 mL larutan (4 μg/mL atau 0.004 mg/mL)",
+                indications: [
+                    "Henti jantung (ACLS)",
+                    "Anafilaksis berat",
+                    "Syok refrakter",
+                    "Status asmatikus refrakter"
+                ],
+                sideEffects: [
+                    "Takhikardia, aritmia ventrikel",
+                    "Hipertensi berat",
+                    "Angina, infark miokard",
+                    "Ansietas, tremor, sakit kepala"
+                ],
+                onset: "Segera",
+                duration: "1-2 menit setelah penghentian"
+            },
+            milrinone: {
+                name: "Milrinone",
+                class: "Inotropik & Vasodilator",
+                description: "Milrinone adalah inhibitor fosfodiesterase III yang meningkatkan cAMP intraseluler, menghasilkan efek inotropik dan vasodilatasi tanpa stimulasi adrenergik langsung.",
+                usualDose: "0.375-0.75",
+                doseUnit: "μg/kg/menit",
+                defaultAmount: 20,
+                defaultAmountUnit: "mg",
+                defaultDiluent: 100,
+                defaultDiluentUnit: "ml",
+                preparationInfo: "Sediaan umum: 20 mg Milrinone dalam 100 mL larutan (0.2 mg/mL)",
+                indications: [
+                    "Gagal jantung kongestif akut",
+                    "Low cardiac output syndrome",
+                    "Terapi jembatan sebelum transplantasi jantung"
+                ],
+                sideEffects: [
+                    "Hipotensi",
+                    "Takhikardia, aritmia",
+                    "Sakit kepala",
+                    "Trombositopenia"
+                ],
+                onset: "5-15 menit",
+                duration: "2-4 jam setelah penghentian"
+            },
+            isoprenaline: {
+                name: "Isoprenaline",
+                class: "Inotropik & Kronotropik",
+                description: "Isoprenaline adalah agonis β-adrenergik non-selektif dengan efek inotropik dan kronotropik kuat, digunakan untuk meningkatkan denyut jantung pada bradiaritmia.",
+                usualDose: "0.02-0.1",
+                doseUnit: "μg/kg/menit",
+                defaultAmount: 1,
+                defaultAmountUnit: "mg",
+                defaultDiluent: 500,
+                defaultDiluentUnit: "ml",
+                preparationInfo: "Sediaan umum: 1 mg Isoprenaline dalam 500 mL larutan (2 μg/mL atau 0.002 mg/mL)",
+                indications: [
+                    "Bradikardia simptomatik refrakter",
+                    "Heart block tingkat tinggi",
+                    "Asistol refrakter",
+                    "Overdose beta-blocker"
+                ],
+                sideEffects: [
+                    "Takhikardia berat",
+                    "Aritmia ventrikel",
+                    "Angina, iskemia miokard",
+                    "Hipotensi (vasodilatasi)"
+                ],
+                onset: "Segera",
+                duration: "Beberapa menit setelah penghentian"
+            }
+        };
+
+        // Variabel global
+        let currentDrug = 'dobutamine';
+        let calculationHistory = [];
+
+        // Inisialisasi
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load history dari localStorage
+            const savedHistory = localStorage.getItem('inotropicCalcHistory');
+            if (savedHistory) {
+                calculationHistory = JSON.parse(savedHistory);
+                updateHistoryDisplay();
+            }
+            
+            // Setup drug selector
+            setupDrugSelector();
+            
+            // Setup event listeners
+            document.getElementById('doseCalculator').addEventListener('submit', calculateDose);
+            document.getElementById('resetBtn').addEventListener('click', resetForm);
+            document.getElementById('patientWeight').addEventListener('input', updateDoseRange);
+            document.getElementById('desiredDose').addEventListener('input', updateDoseRange);
+            document.getElementById('drugAmount').addEventListener('input', calculateConcentration);
+            document.getElementById('drugAmountUnit').addEventListener('change', calculateConcentration);
+            document.getElementById('diluentVolume').addEventListener('input', calculateConcentration);
+            document.getElementById('diluentUnit').addEventListener('change', calculateConcentration);
+            
+            // Set nilai default
+            updateDrugInfo();
+            setDefaultValues();
+            
+            // Hitung konsentrasi awal
+            calculateConcentration();
+        });
+
+        // Setup drug selector
+        function setupDrugSelector() {
+            const drugOptions = document.querySelectorAll('.drug-option');
+            
+            drugOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Hapus kelas active dari semua opsi
+                    drugOptions.forEach(opt => opt.classList.remove('active'));
+                    
+                    // Tambah kelas active ke opsi yang diklik
+                    this.classList.add('active');
+                    
+                    // Update obat yang dipilih
+                    currentDrug = this.getAttribute('data-drug');
+                    
+                    // Update informasi obat
+                    updateDrugInfo();
+                    
+                    // Update nilai default form
+                    setDefaultValues();
+                    
+                    // Hitung konsentrasi
+                    calculateConcentration();
+                });
+            });
+        }
+
+        // Update informasi obat
+        function updateDrugInfo() {
+            const drug = drugs[currentDrug];
+            
+            // Update form units
+            document.getElementById('doseUnit').textContent = drug.doseUnit;
+            
+            // Update dose range info
+            updateDoseRange();
+            
+            // Update drug info display
+            const drugInfoHTML = `
+                <div class="drug-info">
+                    <div class="drug-name">${drug.name}</div>
+                    <div class="drug-class">${drug.class}</div>
+                    <div class="drug-description">${drug.description}</div>
+                    
+                    <h4 style="margin: 15px 0 10px 0; color: var(--primary);"><i class="fas fa-check-circle"></i> Indikasi</h4>
+                    <ul class="indications-list">
+                        ${drug.indications.map(indication => `<li>${indication}</li>`).join('')}
+                    </ul>
+                    
+                    <h4 style="margin: 15px 0 10px 0; color: var(--primary);"><i class="fas fa-exclamation-triangle"></i> Efek Samping</h4>
+                    <ul class="side-effects-list">
+                        ${drug.sideEffects.map(sideEffect => `<li>${sideEffect}</li>`).join('')}
+                    </ul>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Dosis lazim</span>
+                        <span class="result-value">${drug.usualDose} ${drug.doseUnit}</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Sediaan umum</span>
+                        <span class="result-value" id="drugPreparationInfo">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Onset kerja</span>
+                        <span class="result-value">${drug.onset}</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Durasi kerja</span>
+                        <span class="result-value">${drug.duration}</span>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('drugInfo').innerHTML = drugInfoHTML;
+            
+            // Update info sediaan umum
+            document.getElementById('drugPreparationInfo').textContent = drug.preparationInfo;
+        }
+
+        // Set nilai default form berdasarkan obat yang dipilih
+        function setDefaultValues() {
+            const drug = drugs[currentDrug];
+            
+            // Set dosis obat dan pelarut
+            document.getElementById('drugAmount').value = drug.defaultAmount;
+            document.getElementById('drugAmountUnit').value = drug.defaultAmountUnit;
+            document.getElementById('diluentVolume').value = drug.defaultDiluent;
+            document.getElementById('diluentUnit').value = drug.defaultDiluentUnit;
+            
+            // Update info persiapan
+            document.getElementById('preparationInfo').textContent = drug.preparationInfo;
+            
+            // Set dosis default (tengah dari range lazim)
+            const usualDoseRange = drug.usualDose.split('-');
+            if (usualDoseRange.length === 2) {
+                const minDose = parseFloat(usualDoseRange[0]);
+                const maxDose = parseFloat(usualDoseRange[1]);
+                const defaultDose = (minDose + maxDose) / 2;
+                document.getElementById('desiredDose').value = defaultDose.toFixed(drug.doseUnit === 'μg/kg/menit' ? 2 : 3);
+            }
+            
+            // Kosongkan field lainnya
+            document.getElementById('infusionRate').value = '';
+        }
+
+        // Hitung konsentrasi obat
+        function calculateConcentration() {
+            const drugAmount = parseFloat(document.getElementById('drugAmount').value);
+            const drugAmountUnit = document.getElementById('drugAmountUnit').value;
+            const diluentVolume = parseFloat(document.getElementById('diluentVolume').value);
+            const diluentUnit = document.getElementById('diluentUnit').value;
+            
+            if (!drugAmount || !diluentVolume) {
+                document.getElementById('concentrationResult').style.display = 'none';
+                return;
+            }
+            
+            // Konversi semua ke mg dan mL
+            let drugAmountInMg;
+            
+            switch(drugAmountUnit) {
+                case 'mg':
+                    drugAmountInMg = drugAmount;
+                    break;
+                case 'g':
+                    drugAmountInMg = drugAmount * 1000;
+                    break;
+                case 'mcg':
+                    drugAmountInMg = drugAmount / 1000;
+                    break;
+                default:
+                    drugAmountInMg = drugAmount;
+            }
+            
+            let diluentVolumeInMl;
+            
+            switch(diluentUnit) {
+                case 'ml':
+                    diluentVolumeInMl = diluentVolume;
+                    break;
+                case 'l':
+                    diluentVolumeInMl = diluentVolume * 1000;
+                    break;
+                default:
+                    diluentVolumeInMl = diluentVolume;
+            }
+            
+            // Hitung konsentrasi dalam mg/mL
+            const concentration = drugAmountInMg / diluentVolumeInMl;
+            
+            // Tampilkan hasil
+            document.getElementById('calculatedConcentration').textContent = concentration.toFixed(4);
+            document.getElementById('concentrationResult').style.display = 'block';
+            
+            return concentration;
+        }
+
+        // Update informasi range dosis
+        function updateDoseRange() {
+            const drug = drugs[currentDrug];
+            const weight = document.getElementById('patientWeight').value;
+            const dose = document.getElementById('desiredDose').value;
+            
+            let infoText = `Dosis lazim: ${drug.usualDose} ${drug.doseUnit}`;
+            
+            if (weight && dose) {
+                const usualDoseRange = drug.usualDose.split('-');
+                if (usualDoseRange.length === 2) {
+                    const minDose = parseFloat(usualDoseRange[0]);
+                    const maxDose = parseFloat(usualDoseRange[1]);
+                    const currentDose = parseFloat(dose);
+                    
+                    if (currentDose < minDose) {
+                        infoText += ` <span style="color: var(--accent);">(Dosis di bawah range lazim)</span>`;
+                    } else if (currentDose > maxDose) {
+                        infoText += ` <span style="color: var(--accent);">(Dosis di atas range lazim)</span>`;
+                    }
+                }
+            }
+            
+            document.getElementById('doseRangeInfo').innerHTML = infoText;
+        }
+
+        // Hitung dosis
+        function calculateDose(e) {
+            e.preventDefault();
+            
+            // Ambil nilai dari form
+            const weight = parseFloat(document.getElementById('patientWeight').value);
+            const desiredDose = parseFloat(document.getElementById('desiredDose').value);
+            const infusionRateInput = document.getElementById('infusionRate').value;
+            
+            // Hitung konsentrasi
+            const concentration = calculateConcentration();
+            
+            if (!concentration) {
+                alert("Harap isi dosis obat dan volume pelarut untuk menghitung konsentrasi");
+                return;
+            }
+            
+            // Validasi input
+            if (!weight || !desiredDose) {
+                alert("Harap isi semua field yang diperlukan (berat badan dan dosis)");
+                return;
+            }
+            
+            const drug = drugs[currentDrug];
+            let infusionRate, actualDose;
+            
+            // Jika infusion rate diisi, hitung dosis dari infusion rate
+            if (infusionRateInput) {
+                infusionRate = parseFloat(infusionRateInput);
+                
+                // Rumus: Dosis (μg/kg/menit) = (Kecepatan infus (mL/jam) × Konsentrasi (mg/mL) × 1000) / (Berat (kg) × 60)
+                actualDose = (infusionRate * concentration * 1000) / (weight * 60);
+                
+                // Update desired dose dengan hasil perhitungan
+                document.getElementById('desiredDose').value = actualDose.toFixed(3);
+            } else {
+                // Hitung infusion rate dari dosis yang diinginkan
+                // Rumus: Kecepatan infus (mL/jam) = (Dosis (μg/kg/menit) × Berat (kg) × 60) / (Konsentrasi (mg/mL) × 1000)
+                infusionRate = (desiredDose * weight * 60) / (concentration * 1000);
+                actualDose = desiredDose;
+            }
+            
+            // Hitung tetes per menit (asumsi 1 mL = 20 tetes untuk infus makro)
+            const dropsPerMin = (infusionRate * 20) / 60;
+            
+            // Hitung dosis per jam
+            const dosePerHour = (actualDose * weight * 60);
+            
+            // Hitung dosis per hari
+            const dosePerDay = dosePerHour * 24;
+            
+            // Ambil nilai dosis obat dan pelarut
+            const drugAmount = document.getElementById('drugAmount').value;
+            const drugAmountUnit = document.getElementById('drugAmountUnit').value;
+            const diluentVolume = document.getElementById('diluentVolume').value;
+            const diluentUnit = document.getElementById('diluentUnit').value;
+            
+            // Tampilkan hasil
+            document.getElementById('resultDrug').textContent = drug.name;
+            document.getElementById('resultWeight').textContent = `${weight} kg`;
+            document.getElementById('resultDesiredDose').textContent = `${actualDose.toFixed(3)} ${drug.doseUnit}`;
+            document.getElementById('resultConcentration').textContent = `${concentration.toFixed(4)} mg/mL (${drugAmount} ${drugAmountUnit} dalam ${diluentVolume} ${diluentUnit})`;
+            document.getElementById('resultInfusionRate').textContent = `${infusionRate.toFixed(1)} mL/jam`;
+            document.getElementById('resultDropsPerMin').textContent = `${dropsPerMin.toFixed(1)} tetes/menit (asumsi 1 mL = 20 tetes)`;
+            document.getElementById('resultDosePerHour').textContent = `${(dosePerHour/1000).toFixed(3)} mg/jam`;
+            document.getElementById('resultDosePerDay').textContent = `${(dosePerDay/1000).toFixed(3)} mg/hari`;
+            
+            // Tampilkan hasil
+            document.getElementById('results').style.display = 'block';
+            
+            // Tambahkan ke riwayat
+            addToHistory({
+                drug: drug.name,
+                weight: weight,
+                dose: actualDose,
+                unit: drug.doseUnit,
+                concentration: concentration,
+                drugAmount: drugAmount,
+                drugAmountUnit: drugAmountUnit,
+                diluentVolume: diluentVolume,
+                diluentUnit: diluentUnit,
+                infusionRate: infusionRate,
+                dropsPerMin: dropsPerMin,
+                timestamp: new Date().toLocaleString('id-ID')
+            });
+        }
+
+        // Tambahkan perhitungan ke riwayat
+        function addToHistory(calculation) {
+            calculationHistory.unshift(calculation);
+            
+            // Simpan maksimal 10 riwayat
+            if (calculationHistory.length > 10) {
+                calculationHistory.pop();
+            }
+            
+            // Simpan ke localStorage
+            localStorage.setItem('inotropicCalcHistory', JSON.stringify(calculationHistory));
+            
+            // Update tampilan riwayat
+            updateHistoryDisplay();
+        }
+
+        // Update tampilan riwayat
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            const historySection = document.getElementById('historySection');
+            
+            if (calculationHistory.length === 0) {
+                historySection.style.display = 'none';
+                return;
+            }
+            
+            historySection.style.display = 'block';
+            
+            let historyHTML = '';
+            
+            calculationHistory.forEach((calc, index) => {
+                historyHTML += `
+                    <div class="history-item">
+                        <strong>${calc.drug}</strong> - ${calc.weight} kg, ${calc.dose.toFixed(3)} ${calc.unit}<br>
+                        Sediaan: ${calc.drugAmount} ${calc.drugAmountUnit} dalam ${calc.diluentVolume} ${calc.diluentUnit}<br>
+                        Infus: ${calc.infusionRate.toFixed(1)} mL/jam (${calc.dropsPerMin.toFixed(1)} tetes/menit)
+                        <div class="time">${calc.timestamp}</div>
+                    </div>
+                `;
+            });
+            
+            historyList.innerHTML = historyHTML;
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('doseCalculator').reset();
+            document.getElementById('results').style.display = 'none';
+            setDefaultValues();
+            calculateConcentration();
+        }
+    </script>
+</body>
+</html>
